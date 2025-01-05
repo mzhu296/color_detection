@@ -43,6 +43,16 @@ while(1):
     purple_upper = np.array([158, 255, 255], np.uint8)
     purple_mask = cv2.inRange(hsvFrame, purple_lower, purple_upper)
 
+    # Set range for black color and define mask
+    black_lower = np.array([0, 0, 0], np.uint8)
+    black_upper = np.array([180, 255, 50], np.uint8)
+    black_mask = cv2.inRange(hsvFrame, black_lower, black_upper)
+
+    # Set range for white color and define mask
+    white_lower = np.array([0, 0, 200], np.uint8)
+    white_upper = np.array([180, 20, 255], np.uint8)
+    white_mask = cv2.inRange(hsvFrame, white_lower, white_upper)
+
     # Morphological Transform, Dilation for each color and bitwise_and operator
     kernel = np.ones((5, 5), "uint8")
 
@@ -70,6 +80,14 @@ while(1):
     purple_mask = cv2.dilate(purple_mask, kernel)
     res_purple = cv2.bitwise_and(imageFrame, imageFrame, mask=purple_mask)
 
+    # For black color
+    black_mask = cv2.dilate(black_mask, kernel)
+    res_black = cv2.bitwise_and(imageFrame, imageFrame, mask=black_mask)
+
+    # For white color
+    white_mask = cv2.dilate(white_mask, kernel)
+    res_white = cv2.bitwise_and(imageFrame, imageFrame, mask=white_mask)
+
     # Function to detect and label colors
     def detect_and_label(mask, color_name, color_code):
         contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -87,6 +105,8 @@ while(1):
     detect_and_label(yellow_mask, "Yellow Colour", (0, 255, 255))
     detect_and_label(orange_mask, "Orange Colour", (0, 165, 255))
     detect_and_label(purple_mask, "Purple Colour", (128, 0, 128))
+    detect_and_label(black_mask, "Black Colour", (0, 0, 0))
+    detect_and_label(white_mask, "White Colour", (255, 255, 255))
 
     # Program Termination
     cv2.imshow("Multiple Color Detection in Real-Time", imageFrame)
